@@ -34,15 +34,22 @@ Railway detects the `Dockerfile` at the repo root and builds the backend image a
 3. Select the `Zomato-Recommendation-Advisor-` repository.
 4. Railway will auto-detect the root `Dockerfile` and begin building.
 
+> [!IMPORTANT]
+> **Why the Dockerfile uses a 3-stage build with ingest at build time**
+>
+> The dataset is ~52 k rows. If ingestion runs inside the start command (`python scripts/ingest.py && uvicorn ...`), the container is not listening on `$PORT` during that time. Railway enforces a **~5-minute startup timeout** and will kill the container if the port is not bound in time, causing a deployment crash.
+>
+> The `Dockerfile` solves this by running `scripts/ingest.py` **during the image build** (Stage 2). The processed Parquet file is baked into the image so that at container start time the server binds the port in seconds.
+
 ### 1.2 Set the Start Command
 
 1. In the Railway project panel, click on the service block.
 2. Go to **Settings** → **Deploy** → **Start Command**.
 3. Set it to:
    ```bash
-   python scripts/ingest.py && uvicorn main:app --host 0.0.0.0 --port $PORT
+   uvicorn main:app --host 0.0.0.0 --port $PORT
    ```
-   > This runs the data ingestion script on every deploy (downloads and processes the Zomato dataset into a Parquet file), then starts the FastAPI server on the port Railway assigns via `$PORT`.
+   > Ingest already ran during the Docker build — no ingestion at startup means the port binds in seconds and Railway's health check passes immediately.
 
 ### 1.3 Set Environment Variables
 
