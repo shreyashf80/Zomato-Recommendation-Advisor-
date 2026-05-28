@@ -82,6 +82,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Root health-check endpoint — Railway checks this to confirm the service is up.
+@app.get("/")
+def root() -> dict:
+    return {
+        "service": "Zomato AI Recommendation Advisor API",
+        "version": "1.0.0",
+        "status": "running",
+        "docs": "/docs",
+        "api": "/api/v1",
+    }
+
+
 # Include the API router
 app.include_router(api_router, prefix="/api/v1")
 
