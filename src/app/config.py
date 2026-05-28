@@ -1,9 +1,14 @@
 from __future__ import annotations
 
+import os
 from typing import Optional
 
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Calculate project root dynamically: [PROJECT_ROOT]/src/app/config.py -> go up 2 levels
+_CONFIG_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(_CONFIG_DIR, "..", ".."))
 
 
 class Settings(BaseSettings):
@@ -44,6 +49,14 @@ class Settings(BaseSettings):
     llm_timeout_seconds: float = Field(default=60.0, validation_alias="LLM_TIMEOUT_SECONDS", gt=0)
     llm_max_retries: int = Field(default=1, validation_alias="LLM_MAX_RETRIES", ge=0, le=5)
     llm_json_mode: bool = Field(default=True, validation_alias="LLM_JSON_MODE")
+
+    @model_validator(mode="after")
+    def resolve_paths(self) -> Settings:
+        if not os.path.isabs(self.data_path):
+            self.data_path = os.path.abspath(os.path.join(PROJECT_ROOT, self.data_path))
+        if not os.path.isabs(self.hf_home):
+            self.hf_home = os.path.abspath(os.path.join(PROJECT_ROOT, self.hf_home))
+        return self
 
 
 def get_settings() -> Settings:
