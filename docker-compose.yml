@@ -1,0 +1,43 @@
+services:
+  # ── FastAPI Backend ──────────────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: zomato-backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - PORT=8000
+      - PYTHONPATH=/app/src
+      # Override CORS to allow the frontend container
+      - CORS_ORIGINS=http://localhost:5173,http://localhost:3000,http://frontend:80
+    volumes:
+      # Persist the processed Parquet data across container restarts
+      - parquet_data:/app/data/processed
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s     # Allow time for ingest on first run
+
+  # ── React Frontend (Nginx) ───────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Injected at build time so Vite can inline it
+        VITE_API_BASE_URL: http://localhost:8000/api/v1
+    container_name: zomato-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  parquet_data:

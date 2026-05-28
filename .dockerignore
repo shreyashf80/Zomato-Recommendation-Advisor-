@@ -1,0 +1,33 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Large raw data (downloaded fresh inside container via ingest)
+data/raw/hf_cache/
+data/processed/*.parquet
+data/processed/*.report.json
+
+# Secrets – never bake into images
+.env
+.env.local
+.env.*.local
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.vite/
+npm-debug.log*
+
+# OS
+.DS_Store
+.git/
+.gitignore
