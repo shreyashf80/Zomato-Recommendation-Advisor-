@@ -9,6 +9,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
+    cors_origins: str = Field(
+        default="http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000",
+        validation_alias="CORS_ORIGINS",
+    )
+
     dataset_id: str = Field(
         default="ManikaSaini/zomato-restaurant-recommendation",
         validation_alias="DATASET_ID",

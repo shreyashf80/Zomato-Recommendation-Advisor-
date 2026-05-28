@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
 
 // Sample fallback food/dining images to cycle through for high-quality card graphics
 const CARD_IMAGES = [
@@ -53,7 +53,7 @@ export default function App() {
         }
       } catch (err) {
         console.error(err);
-        setErrorMsg('Could not connect to the Zomato AI server. Make sure it is running on http://localhost:8000.');
+        setErrorMsg('Could not connect to the Zomato AI server at ' + API_BASE_URL + '. Please verify your server connection or CORS settings.');
       } finally {
         setMetaLoading(false);
       }

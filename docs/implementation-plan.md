@@ -22,6 +22,7 @@ This plan operationalizes the architecture described in `docs/architecture.md` a
   - `LLM_PROVIDER`, `LLM_API_KEY`, `LLM_MODEL`
   - `DATA_PATH`, `MAX_CANDIDATES`
   - `BUDGET_LOW_MAX`, `BUDGET_MEDIUM_MAX` (or equivalent thresholds)
+  - `CORS_ORIGINS` (comma-separated list of allowed origins)
 - A minimal runnable entrypoint:
   - `src/app/main.py` (even if it only shows a placeholder screen / health endpoint)
 
@@ -189,6 +190,7 @@ Implement the user-facing experience using a React frontend communication with a
   - `GET /api/v1/health`: Checks application liveness.
   - `GET /api/v1/metadata/locations`: Returns distinct, sorted locations for frontend dropdown lists.
   - `GET /api/v1/metadata/cuisines`: Returns distinct, sorted cuisines for frontend dropdown lists.
+  - `CORS_ORIGINS` CORS allowed origins configuration dynamically read from the environment variables.
 - **React Frontend Application**:
   - Wide layout (`max-w-[1200px]`) containing a compact, responsive top filter grid panel (Location, Cuisine, Budget, Sliders, Special Requests, and Search button).
   - Dropdown fields dynamically loading from `/api/v1/metadata/*` endpoints on load.
@@ -196,6 +198,7 @@ Implement the user-facing experience using a React frontend communication with a
   - Responsive loading skeleton grid that mimics the cards' layout during active generation.
   - Results rendering of AI Verdict Summary banner and a multi-column restaurant cards grid (`grid-cols-1 md:grid-cols-2 lg:grid-cols-3` on desktop).
   - Vertical restaurant card components (image at top, details below) aligned to uniform heights.
+  - Dynamic `VITE_API_BASE_URL` environment variable read at startup to connect to the custom backend server.
 
 ### Exit criteria
 

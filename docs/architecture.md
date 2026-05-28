@@ -505,22 +505,20 @@ Form fields map 1:1 to UserPreferences. Location and cuisine dropdowns load dyna
 Cross-Cutting Concerns
 Configuration
 Environment-driven settings:
-Variable
-Purpose
-LLM_PROVIDER
-openai / anthropic / ollama
-LLM_API_KEY
-Provider secret
-LLM_MODEL
-Model name
-DATA_PATH
-Processed restaurant artifact path
-MAX_CANDIDATES
-Cap before LLM
-BUDGET_LOW_MAX, etc.
-Band thresholds
 
-Use .env locally; never commit secrets.
+| Variable | Purpose | Location |
+| :--- | :--- | :--- |
+| **LLM_PROVIDER** | Name of the LLM provider (`groq`, `openai`, etc.) | Backend (`.env`) |
+| **GROQ_API_KEY** / **LLM_API_KEY** | Authentication key for the LLM API provider | Backend (`.env`) |
+| **LLM_MODEL** | Model identifier (e.g., `llama-3.3-70b-versatile`) | Backend (`.env`) |
+| **DATA_PATH** | Local path to the processed Parquet database file | Backend (`.env`) |
+| **MAX_CANDIDATES** | Hard cap on candidate restaurants passed to LLM | Backend (`.env`) |
+| **BUDGET_LOW_MAX** | Upper threshold cost for low budget band | Backend (`.env`) |
+| **BUDGET_MEDIUM_MAX** | Upper threshold cost for medium budget band | Backend (`.env`) |
+| **CORS_ORIGINS** | Comma-separated list of origins allowed to call the API | Backend (`.env`) |
+| **VITE_API_BASE_URL** | Base endpoint URL of the FastAPI backend for the React client | Frontend (`frontend/.env`) |
+
+Use `.env` files locally; never commit production secrets.
 Logging & Observability
 Log filter counts, prompt token estimate, LLM latency, parse success/failure
 Correlation id per request for debugging

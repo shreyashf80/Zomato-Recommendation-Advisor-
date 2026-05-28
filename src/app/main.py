@@ -71,13 +71,12 @@ async def add_correlation_id_middleware(request: Request, call_next: Callable) -
 
 
 # Configure CORS to allow the React client to make cross-origin requests
+settings = get_settings()
+origins = [origin.strip() for origin in settings.cors_origins.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:3000",
-    ],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
